@@ -1,0 +1,26 @@
+{
+  "_comment": "Copy this file to config.json and fill in your values.",
+
+  "ntfy_topic": "kalshi-my-unique-topic-1234",
+
+  "kalshi_api_key": "",
+
+  "poll_interval_seconds": 300,
+
+  "markets": [
+    {
+      "ticker": "KXBTCD-25DEC31-T100000",
+      "_comment_ticker": "Find your ticker on kalshi.com — it's in the market URL",
+      "name": "Bitcoin above $100k by end of 2025",
+      "alert_threshold_percent": 3,
+      "direction": "both",
+      "_comment_direction": "Options: 'up', 'down', or 'both'"
+    },
+    {
+      "ticker": "PRES-2028-DT",
+      "name": "Democrat wins 2028 Presidential Election",
+      "alert_threshold_percent": 5,
+      "direction": "both"
+    }
+  ]
+}

@@ -1,1 +1,6 @@
 README.md
+config.json
+.alert_state.json
+__pycache__/
+*.pyc
+
