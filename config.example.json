@@ -1,26 +1,28 @@
 {
   "_comment": "Copy this file to config.json and fill in your values.",
 
-  "ntfy_topic": "kalshi-my-unique-topic-1234",
+  "ntfy_topic": "kalshi-sports-alerts-CHANGEME",
+  "_comment_topic": "Pick something unique — this is your private notification channel",
 
   "kalshi_api_key": "",
+  "_comment_api_key": "Optional. Leave blank — public sports markets don't require it",
 
   "poll_interval_seconds": 300,
+  "_comment_interval": "How often to check all markets (seconds). 300 = every 5 minutes",
 
-  "markets": [
-    {
-      "ticker": "KXBTCD-25DEC31-T100000",
-      "_comment_ticker": "Find your ticker on kalshi.com — it's in the market URL",
-      "name": "Bitcoin above $100k by end of 2025",
-      "alert_threshold_percent": 3,
-      "direction": "both",
-      "_comment_direction": "Options: 'up', 'down', or 'both'"
-    },
-    {
-      "ticker": "PRES-2028-DT",
-      "name": "Democrat wins 2028 Presidential Election",
-      "alert_threshold_percent": 5,
-      "direction": "both"
+  "default_threshold_percent": 5,
+  "_comment_threshold": "Alert when a market moves this many percentage points (e.g. 5 = alert on a 5pp move)",
+
+  "default_direction": "both",
+  "_comment_direction": "Alert on moves in which direction: 'up', 'down', or 'both'",
+
+  "market_overrides": {
+    "_comment": "Optional. Override threshold or direction for specific tickers.",
+    "_comment2": "Run  python kalshi_monitor.py --list-markets  to see all available tickers.",
+    "SOME-SPECIFIC-TICKER": {
+      "threshold_percent": 10,
+      "direction": "up",
+      "name": "Custom display name"
     }
-  ]
+  }
 }

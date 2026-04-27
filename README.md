@@ -1,79 +1,118 @@
-# Kalshi Price Alerts for iOS
+# Kalshi Sports Price Alerts for iOS
 
-Get a native iOS push notification whenever a Kalshi prediction market moves by
-a configured number of percentage points.
+Automatically watches **all** Kalshi sports markets and sends a native iOS push
+notification whenever a market moves by your configured threshold.
 
-Two approaches — pick the one that fits your setup:
+Runs as a background service on your Mac mini.  Uses
+[ntfy](https://ntfy.sh) for free push notifications — no Apple Developer
+account required.
 
 ---
 
-## Option A: Python monitor + ntfy (recommended)
+## How it works
 
-Runs on any always-on machine (Mac, Linux server, Raspberry Pi, free cloud VM).
-Sends real push notifications to your iPhone via the free
-[ntfy](https://ntfy.sh) app — no Apple Developer account needed.
+1. Every 5 minutes (configurable) the script fetches all open Kalshi sports markets
+2. If any market's YES price has moved ≥ your threshold since the last alert, a push notification fires to your iPhone
+3. The baseline resets after each alert so you keep getting notified on continued moves
 
-### Quick start
+---
+
+## Mac mini setup (one time)
+
+### 1. Install Python dependencies
+
+Open Terminal on your Mac mini:
 
 ```bash
-# 1. Install dependencies
-pip install -r requirements.txt
+cd /path/to/this/folder
+pip3 install -r requirements.txt
+```
 
-# 2. Configure markets and threshold
+### 2. Configure
+
+```bash
 cp config.example.json config.json
-# Edit config.json — set your ntfy topic and add your Kalshi tickers
-
-# 3. Install the ntfy app on your iPhone
-#    App Store: https://apps.apple.com/app/ntfy/id1625396347
-#    Subscribe to the same topic you put in config.json
-
-# 4. Run (keep it running in a screen/tmux session or as a systemd service)
-python kalshi_monitor.py
-
-# One-shot mode (great for cron)
-python kalshi_monitor.py --once
+open config.json   # edit in TextEdit or any editor
 ```
 
-### config.json fields
+The only required fields:
 
-| Field | Description |
+| Field | What to set |
 |---|---|
-| `ntfy_topic` | A unique string — this is your "channel". Use something hard to guess, e.g. `kalshi-alerts-abc123` |
-| `kalshi_api_key` | Optional. Leave blank for public markets |
-| `poll_interval_seconds` | How often to check (default 300 = every 5 min) |
-| `markets[].ticker` | Kalshi ticker from the market URL |
-| `markets[].alert_threshold_percent` | Minimum move (in percentage points) to trigger an alert |
-| `markets[].direction` | `"up"`, `"down"`, or `"both"` |
+| `ntfy_topic` | A unique string like `kalshi-sports-abc123` — this is your private channel |
+| `default_threshold_percent` | Minimum move (in percentage points) to trigger an alert. `5` is a good starting point |
+| `default_direction` | `"both"` to alert on any move, `"up"` or `"down"` to filter |
 
-### Finding a Kalshi ticker
+Per-market overrides are optional — use them if you want a different threshold
+on a specific market.  Run `python3 kalshi_monitor.py --list-markets` to see all
+available tickers and their current prices.
 
-Go to a market on [kalshi.com](https://kalshi.com).  The ticker is the last
-segment of the URL, e.g. `KXBTCD-25DEC31-T100000`.
+### 3. Install the ntfy app on your iPhone
 
-### Running as a cron job
+1. Download **ntfy** from the [App Store](https://apps.apple.com/app/ntfy/id1625396347) (free)
+2. Tap **+** → enter the exact topic name you put in `config.json`
+3. Enable notifications when prompted
 
-```cron
-# Check every 5 minutes
-*/5 * * * * /usr/bin/python3 /path/to/kalshi_monitor.py --once >> /var/log/kalshi.log 2>&1
+### 4. Test it
+
+```bash
+python3 kalshi_monitor.py --once
+```
+
+You should see it fetch markets and log them.  To force a test notification,
+temporarily set `default_threshold_percent` to `0.1`, run `--once`, then set it back.
+
+### 5. Install as a background service (auto-starts on login)
+
+```bash
+python3 kalshi_monitor.py --install-mac-service
+launchctl load ~/Library/LaunchAgents/com.kalshi.monitor.plist
+```
+
+The service will:
+- Start automatically when you log in to your Mac
+- Restart itself if it ever crashes
+- Log output to `~/Library/Logs/kalshi_monitor.log`
+
+**To view live logs:**
+```bash
+tail -f ~/Library/Logs/kalshi_monitor.log
+```
+
+**To stop the service:**
+```bash
+launchctl unload ~/Library/LaunchAgents/com.kalshi.monitor.plist
 ```
 
 ---
 
-## Option B: Apple Shortcut (no server needed)
+## Notifications
 
-Runs entirely on your iPhone using the Shortcuts app.  Checks Kalshi on a
-schedule, compares to the last saved price, and fires a native notification.
+```
+📈 Kalshi Sports: Chiefs to win Super Bowl
+Moved up 6.2 pp
+41.0% → 47.2%
+```
 
-→ See **[apple_shortcut_guide.md](apple_shortcut_guide.md)** for step-by-step
-  instructions.
+```
+📉 Kalshi Sports: Lakers to win NBA Championship
+Moved down 5.1 pp
+28.3% → 23.2%
+```
 
 ---
 
-## How alerts look
+## Useful commands
 
-```
-📈 Kalshi Alert: Bitcoin above $100k
-Moved +4.2 pp → now 67.3%
+```bash
+# See all current sports markets and their prices
+python3 kalshi_monitor.py --list-markets
+
+# Run one check manually (good for testing)
+python3 kalshi_monitor.py --once
+
+# Reset all saved baselines (start fresh)
+python3 kalshi_monitor.py --reset-state --once
 ```
 
 ---
@@ -81,8 +120,8 @@ Moved +4.2 pp → now 67.3%
 ## Files
 
 ```
-kalshi_monitor.py        Python monitoring script
-config.example.json      Template config (copy → config.json)
-requirements.txt         pip dependencies
-apple_shortcut_guide.md  Step-by-step Shortcut setup for iPhone
+kalshi_monitor.py        Main monitoring script
+config.example.json      Template config — copy to config.json
+requirements.txt         pip dependencies (just requests)
+apple_shortcut_guide.md  Alternative: no-server Shortcut setup for iPhone
 ```
