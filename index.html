@@ -1,0 +1,1287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Khim David — Character Sheet</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cinzel+Decorative:wght@400;700&family=Raleway:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg:          #08081a;
+            --bg-panel:    #0f0f26;
+            --bg-card:     #161632;
+            --border:      #252548;
+            --gold:        #c9a84c;
+            --gold-bright: #ffd860;
+            --gold-dark:   #7a6020;
+            --teal:        #22d3ee;
+            --teal-dark:   #0e7490;
+            --green:       #4ade80;
+            --green-dark:  #166534;
+            --blue:        #60a5fa;
+            --blue-dark:   #1e3a5f;
+            --purple:      #c084fc;
+            --red:         #f87171;
+            --text:        #e2e8f0;
+            --text-muted:  #94a3b8;
+            --text-dim:    #475569;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Raleway', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Subtle background grid */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(201,168,76,0.025) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(201,168,76,0.025) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(ellipse 60% 50% at 10% 10%, rgba(201,168,76,0.07) 0%, transparent 60%),
+                radial-gradient(ellipse 50% 60% at 90% 90%, rgba(34,211,238,0.05) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
+        /* ─── PAGE ENTRANCE ─── */
+        .sheet {
+            max-width: 1120px;
+            margin: 0 auto;
+            padding: 2rem 1.25rem 3rem;
+            position: relative;
+            z-index: 1;
+            animation: fadeUp 0.6s ease both;
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ─── HEADER ─── */
+        .header {
+            border: 1px solid var(--gold-dark);
+            border-radius: 6px;
+            padding: 1.5rem 2rem;
+            margin-bottom: 1.25rem;
+            background: var(--bg-panel);
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 1rem;
+            align-items: center;
+            position: relative;
+        }
+
+        /* Corner ornaments */
+        .header::before, .header::after {
+            content: '✦';
+            position: absolute;
+            color: var(--gold);
+            font-size: 0.9rem;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        .header::before { left: -9px;  background: var(--bg); padding: 0 3px; }
+        .header::after  { right: -9px; background: var(--bg); padding: 0 3px; }
+
+        .char-name {
+            font-family: 'Cinzel Decorative', serif;
+            font-size: clamp(1.6rem, 4vw, 2.6rem);
+            color: var(--gold-bright);
+            line-height: 1.1;
+            text-shadow: 0 0 40px rgba(255,216,96,0.25);
+        }
+
+        .char-title {
+            font-family: 'Cinzel', serif;
+            font-size: 0.8rem;
+            color: var(--teal);
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            margin-top: 0.4rem;
+        }
+
+        .char-meta {
+            display: flex;
+            gap: 1.5rem;
+            margin-top: 0.85rem;
+            flex-wrap: wrap;
+        }
+
+        .meta-badge {
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            letter-spacing: 0.08em;
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        .meta-badge span { color: var(--text); font-weight: 600; }
+
+        .level-badge {
+            width: 82px;
+            height: 82px;
+            border: 2px solid var(--gold);
+            border-radius: 50%;
+            background: var(--bg-card);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 24px rgba(201,168,76,0.2), inset 0 0 20px rgba(201,168,76,0.05);
+            flex-shrink: 0;
+        }
+
+        .level-label {
+            font-family: 'Cinzel', serif;
+            font-size: 0.5rem;
+            color: var(--gold);
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+        }
+
+        .level-num {
+            font-family: 'Cinzel Decorative', serif;
+            font-size: 2rem;
+            color: var(--gold-bright);
+            line-height: 1;
+        }
+
+        /* ─── FEATURED QUEST BANNER ─── */
+        .featured-banner {
+            background: linear-gradient(135deg, var(--bg-panel), rgba(34,211,238,0.04));
+            border: 1px solid var(--teal-dark);
+            border-radius: 6px;
+            padding: 0.9rem 1.25rem;
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            animation: pulseTeal 3s ease-in-out infinite;
+        }
+
+        @keyframes pulseTeal {
+            0%, 100% { box-shadow: 0 0 0   rgba(34,211,238,0); }
+            50%       { box-shadow: 0 0 16px rgba(34,211,238,0.15); }
+        }
+
+        .banner-icon { font-size: 1.4rem; flex-shrink: 0; }
+
+        .banner-text { flex: 1; }
+
+        .banner-label {
+            font-size: 0.58rem;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: var(--teal);
+            margin-bottom: 0.2rem;
+        }
+
+        .banner-title {
+            font-family: 'Cinzel', serif;
+            font-size: 0.82rem;
+            color: var(--text);
+        }
+
+        .banner-sub {
+            font-size: 0.68rem;
+            color: var(--text-muted);
+            margin-top: 0.2rem;
+        }
+
+        /* ─── MAIN GRID ─── */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 220px 1fr;
+            gap: 1.25rem;
+            align-items: start;
+        }
+
+        /* ─── LEFT COLUMN ─── */
+        .left-col {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        /* Portrait card */
+        .portrait-card {
+            background: var(--bg-panel);
+            border: 1px solid var(--gold-dark);
+            border-radius: 6px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .avatar {
+            width: 96px;
+            height: 96px;
+            border-radius: 50%;
+            border: 3px solid var(--gold);
+            background: var(--bg-card);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Cinzel Decorative', serif;
+            font-size: 1.8rem;
+            color: var(--gold-bright);
+            box-shadow: 0 0 32px rgba(201,168,76,0.25);
+            position: relative;
+            z-index: 1;
+        }
+
+        .avatar-wrap {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .ring {
+            position: absolute;
+            border-radius: 50%;
+            border: 1px solid;
+        }
+
+        .ring-1 {
+            width: 116px;
+            height: 116px;
+            border-color: rgba(201,168,76,0.3);
+            animation: spin 18s linear infinite;
+        }
+
+        .ring-2 {
+            width: 134px;
+            height: 134px;
+            border-color: rgba(201,168,76,0.12);
+            border-style: dashed;
+            animation: spin 28s linear infinite reverse;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to   { transform: rotate(360deg); }
+        }
+
+        .class-block { text-align: center; }
+
+        .class-label {
+            font-family: 'Cinzel', serif;
+            font-size: 0.58rem;
+            color: var(--text-dim);
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+        }
+
+        .class-name {
+            font-family: 'Cinzel', serif;
+            font-size: 0.82rem;
+            color: var(--purple);
+            margin-top: 0.2rem;
+        }
+
+        .guild-name {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            margin-top: 0.15rem;
+        }
+
+        /* Vitals */
+        .panel {
+            background: var(--bg-panel);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 1rem;
+        }
+
+        .panel-title {
+            font-family: 'Cinzel', serif;
+            font-size: 0.6rem;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: var(--gold);
+            text-align: center;
+            margin-bottom: 0.85rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--gold-dark);
+        }
+
+        .vitals { display: flex; flex-direction: column; gap: 0.7rem; }
+
+        .vital-row {
+            display: flex;
+            flex-direction: column;
+            gap: 0.28rem;
+        }
+
+        .vital-label-row {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .vital-name {
+            font-family: 'Cinzel', serif;
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+        }
+
+        .vn-hp { color: var(--green); }
+        .vn-mp { color: var(--blue); }
+        .vn-xp { color: var(--gold); }
+
+        .vital-val {
+            font-size: 0.62rem;
+            color: var(--text-dim);
+            font-variant-numeric: tabular-nums;
+        }
+
+        .bar-track {
+            height: 7px;
+            background: rgba(255,255,255,0.04);
+            border-radius: 4px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.04);
+        }
+
+        .bar-fill {
+            height: 100%;
+            width: 0%;
+            border-radius: 4px;
+            transition: width 1.6s cubic-bezier(0.34, 1.2, 0.64, 1);
+            position: relative;
+        }
+
+        .bar-fill::after {
+            content: '';
+            position: absolute;
+            right: 0; top: 0; bottom: 0;
+            width: 3px;
+            background: rgba(255,255,255,0.45);
+            border-radius: 0 4px 4px 0;
+        }
+
+        .bar-hp { background: linear-gradient(90deg, #166534, #4ade80); }
+        .bar-mp { background: linear-gradient(90deg, #1e3a5f, #60a5fa); }
+        .bar-xp { background: linear-gradient(90deg, #7a6020, #ffd860); }
+
+        /* Stats */
+        .stat-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.45rem;
+        }
+
+        .stat-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 0.5rem 0.35rem;
+            text-align: center;
+            cursor: default;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            position: relative;
+        }
+
+        .stat-item:hover {
+            border-color: var(--gold-dark);
+            box-shadow: 0 0 12px rgba(201,168,76,0.1);
+        }
+
+        .stat-abbr {
+            font-family: 'Cinzel', serif;
+            font-size: 0.55rem;
+            color: var(--text-dim);
+            letter-spacing: 0.15em;
+        }
+
+        .stat-value {
+            font-family: 'Cinzel Decorative', serif;
+            font-size: 1.35rem;
+            color: var(--gold-bright);
+            line-height: 1;
+            margin: 0.15rem 0;
+        }
+
+        .stat-name {
+            font-size: 0.55rem;
+            color: var(--teal);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        .stat-tip {
+            display: none;
+            position: absolute;
+            bottom: calc(100% + 6px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--bg-card);
+            border: 1px solid var(--gold-dark);
+            padding: 0.4rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            width: 180px;
+            white-space: normal;
+            z-index: 20;
+            text-align: left;
+            pointer-events: none;
+            line-height: 1.4;
+        }
+
+        .stat-item:hover .stat-tip { display: block; }
+
+        /* ─── RIGHT COLUMN ─── */
+        .right-col { display: flex; flex-direction: column; gap: 1rem; }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 1px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .tab-btn {
+            font-family: 'Cinzel', serif;
+            font-size: 0.65rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--text-dim);
+            background: none;
+            border: none;
+            padding: 0.6rem 1.1rem;
+            cursor: pointer;
+            transition: color 0.2s;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -1px;
+        }
+
+        .tab-btn:hover { color: var(--text-muted); }
+
+        .tab-btn.active {
+            color: var(--gold);
+            border-bottom-color: var(--gold);
+        }
+
+        .tab-pane { display: none; }
+        .tab-pane.active { display: block; animation: fadeIn 0.25s ease; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ─── SKILLS ─── */
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+            gap: 0.7rem;
+        }
+
+        .skill-card {
+            background: var(--bg-panel);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 0.75rem 0.9rem;
+            transition: border-color 0.2s, transform 0.2s;
+        }
+
+        .skill-card:hover {
+            border-color: var(--teal-dark);
+            transform: translateY(-2px);
+        }
+
+        .skill-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.4rem;
+            gap: 0.5rem;
+        }
+
+        .skill-name {
+            font-family: 'Cinzel', serif;
+            font-size: 0.72rem;
+            color: var(--text);
+            line-height: 1.3;
+        }
+
+        .stars { display: flex; gap: 2px; font-size: 0.6rem; flex-shrink: 0; }
+        .stars .s { color: var(--gold-dark); }
+        .stars .s.on { color: var(--gold); }
+
+        .skill-desc {
+            font-size: 0.64rem;
+            color: var(--text-dim);
+            line-height: 1.45;
+        }
+
+        /* Section divider */
+        .section-head {
+            font-family: 'Cinzel', serif;
+            font-size: 0.62rem;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: var(--gold);
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            margin: 1.25rem 0 0.75rem;
+        }
+
+        .section-head::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--gold-dark);
+        }
+
+        /* Abilities */
+        .abilities-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(175px, 1fr));
+            gap: 0.7rem;
+        }
+
+        .ability-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-top: 2px solid transparent;
+            border-radius: 4px;
+            padding: 0.8rem;
+            transition: box-shadow 0.2s, transform 0.2s;
+        }
+
+        .ability-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 24px rgba(0,0,0,0.4);
+        }
+
+        .ability-card.t-teal   { border-top-color: var(--teal);   }
+        .ability-card.t-purple { border-top-color: var(--purple); }
+        .ability-card.t-gold   { border-top-color: var(--gold);   }
+        .ability-card.t-red    { border-top-color: var(--red);    }
+        .ability-card.t-blue   { border-top-color: var(--blue);   }
+        .ability-card.t-green  { border-top-color: var(--green);  }
+
+        .ab-icon  { font-size: 1.25rem; margin-bottom: 0.4rem; }
+        .ab-name  { font-family: 'Cinzel', serif; font-size: 0.72rem; color: var(--text); margin-bottom: 0.3rem; }
+        .ab-desc  { font-size: 0.64rem; color: var(--text-dim); line-height: 1.45; }
+
+        /* ─── QUEST LOG ─── */
+        .quest-list { display: flex; flex-direction: column; gap: 0.75rem; }
+
+        .quest-card {
+            background: var(--bg-panel);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 1rem 1.2rem;
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 0.75rem;
+            align-items: start;
+            transition: border-color 0.2s;
+        }
+
+        .quest-card.featured {
+            border-color: var(--gold-dark);
+            background: linear-gradient(135deg, var(--bg-panel), rgba(201,168,76,0.04));
+        }
+
+        .quest-card.featured:hover {
+            border-color: var(--gold);
+            box-shadow: 0 0 20px rgba(201,168,76,0.1);
+        }
+
+        .q-name {
+            font-family: 'Cinzel', serif;
+            font-size: 0.82rem;
+            color: var(--text);
+            margin-bottom: 0.18rem;
+        }
+
+        .quest-card.featured .q-name { color: var(--gold-bright); }
+
+        .q-org  {
+            font-size: 0.7rem;
+            color: var(--teal);
+            margin-bottom: 0.5rem;
+            letter-spacing: 0.04em;
+        }
+
+        .q-list { list-style: none; display: flex; flex-direction: column; gap: 0.2rem; }
+
+        .q-list li {
+            font-size: 0.68rem;
+            color: var(--text-dim);
+            padding-left: 1em;
+            position: relative;
+            line-height: 1.45;
+        }
+
+        .q-list li::before {
+            content: '▸';
+            position: absolute;
+            left: 0;
+            color: var(--gold-dark);
+        }
+
+        .q-side {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 0.35rem;
+            flex-shrink: 0;
+        }
+
+        .badge {
+            font-family: 'Cinzel', serif;
+            font-size: 0.52rem;
+            letter-spacing: 0.15em;
+            padding: 0.18rem 0.45rem;
+            border-radius: 3px;
+            white-space: nowrap;
+        }
+
+        .badge.done      { color: var(--green); border: 1px solid var(--green-dark); background: rgba(74,222,128,0.05); }
+        .badge.active    { color: var(--gold);  border: 1px solid var(--gold-dark);  background: rgba(201,168,76,0.08);
+                           animation: pulseGold 2s ease-in-out infinite; }
+        .badge.available { color: var(--teal);  border: 1px solid var(--teal-dark);  background: rgba(34,211,238,0.06);
+                           animation: pulseTeal 2s ease-in-out infinite; }
+
+        @keyframes pulseGold {
+            0%, 100% { box-shadow: none; }
+            50%       { box-shadow: 0 0 8px rgba(201,168,76,0.3); }
+        }
+
+        .q-dur { font-size: 0.6rem; color: var(--text-dim); }
+
+        /* Alignment checklist */
+        .align-box {
+            margin-top: 0.6rem;
+            background: rgba(34,211,238,0.04);
+            border: 1px solid rgba(34,211,238,0.15);
+            border-radius: 4px;
+            padding: 0.6rem 0.75rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.25rem 1rem;
+        }
+
+        .align-row {
+            font-size: 0.62rem;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        .align-row .ck { color: var(--green); font-size: 0.65rem; }
+        .align-row .ck.partial { color: var(--gold); }
+
+        /* ─── EQUIPMENT ─── */
+        .equip-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(155px, 1fr));
+            gap: 0.7rem;
+        }
+
+        .equip-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 0.85rem;
+            text-align: center;
+            transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .equip-card:hover { transform: translateY(-3px); }
+
+        .equip-card.legendary { border-color: rgba(255,216,96,0.25); }
+        .equip-card.legendary:hover { border-color: var(--gold);   box-shadow: 0 6px 20px rgba(255,216,96,0.15); }
+
+        .equip-card.epic      { border-color: rgba(192,132,252,0.25); }
+        .equip-card.epic:hover { border-color: var(--purple); box-shadow: 0 6px 20px rgba(192,132,252,0.15); }
+
+        .equip-card.rare      { border-color: rgba(96,165,250,0.25); }
+        .equip-card.rare:hover { border-color: var(--blue);   box-shadow: 0 6px 20px rgba(96,165,250,0.15); }
+
+        .equip-card.uncommon  { border-color: rgba(74,222,128,0.25); }
+        .equip-card.uncommon:hover { border-color: var(--green);  box-shadow: 0 6px 20px rgba(74,222,128,0.15); }
+
+        .eq-icon   { font-size: 1.5rem; margin-bottom: 0.4rem; }
+        .eq-name   { font-family: 'Cinzel', serif; font-size: 0.7rem; color: var(--text); margin-bottom: 0.3rem; }
+        .eq-rarity { font-size: 0.56rem; letter-spacing: 0.16em; text-transform: uppercase; font-weight: 700; }
+        .eq-desc   { font-size: 0.6rem; color: var(--text-dim); margin-top: 0.35rem; line-height: 1.4; }
+
+        .r-legendary { color: var(--gold); }
+        .r-epic      { color: var(--purple); }
+        .r-rare      { color: var(--blue); }
+        .r-uncommon  { color: var(--green); }
+
+        /* ─── LORE ─── */
+        .lore-block {
+            background: var(--bg-panel);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 1.75rem 2rem 1.5rem;
+            font-size: 0.82rem;
+            line-height: 1.85;
+            color: var(--text-muted);
+            font-style: italic;
+            position: relative;
+        }
+
+        .lore-block::before {
+            content: '"';
+            font-family: 'Cinzel Decorative', serif;
+            font-size: 5rem;
+            color: var(--gold-dark);
+            position: absolute;
+            top: -10px;
+            left: 1.2rem;
+            line-height: 1;
+            pointer-events: none;
+        }
+
+        .lore-block p { margin-bottom: 0.85rem; text-indent: 1.5rem; }
+        .lore-block p:last-child { margin-bottom: 0; }
+
+        .hi { color: var(--teal); font-style: normal; font-weight: 600; }
+        .hi-gold { color: var(--gold-bright); font-style: normal; font-weight: 600; }
+
+        /* ─── FOOTER ─── */
+        .footer {
+            margin-top: 2rem;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            padding-top: 1.25rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .contact-link {
+            font-family: 'Cinzel', serif;
+            font-size: 0.65rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--text-dim);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: color 0.2s;
+        }
+
+        .contact-link:hover { color: var(--gold); }
+
+        /* ─── RESPONSIVE ─── */
+        @media (max-width: 740px) {
+            .main-grid { grid-template-columns: 1fr; }
+            .left-col  { display: grid; grid-template-columns: 1fr 1fr; }
+            .portrait-card { grid-column: span 2; }
+        }
+
+        @media (max-width: 480px) {
+            .left-col  { grid-template-columns: 1fr; }
+            .portrait-card { grid-column: auto; }
+            .align-box { grid-template-columns: 1fr; }
+            .tab-btn { padding: 0.5rem 0.6rem; font-size: 0.58rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="sheet">
+
+    <!-- ── HEADER ── -->
+    <div class="header">
+        <div>
+            <div class="char-name">Khim David</div>
+            <div class="char-title">Operations Strategist &nbsp;·&nbsp; The Connector</div>
+            <div class="char-meta">
+                <div class="meta-badge">⚔ CLASS <span>Ops Mage / Storyteller</span></div>
+                <div class="meta-badge">🏰 GUILD <span>Apple</span></div>
+                <div class="meta-badge">📍 REALM <span>Greater Hartford, CT</span></div>
+                <div class="meta-badge">🎓 ORIGIN <span>ASU · Cronkite School</span></div>
+            </div>
+        </div>
+        <div class="level-badge">
+            <div class="level-label">Level</div>
+            <div class="level-num">12</div>
+        </div>
+    </div>
+
+    <!-- ── FEATURED QUEST BANNER ── -->
+    <div class="featured-banner">
+        <div class="banner-icon">⚡</div>
+        <div class="banner-text">
+            <div class="banner-label">New Quest Available</div>
+            <div class="banner-title">Training Operations Associate II — Lyra Health</div>
+            <div class="banner-sub">Alignment: HIGH &nbsp;·&nbsp; All core requirements met &nbsp;·&nbsp; Remote, USA</div>
+        </div>
+        <div class="badge available">AVAILABLE</div>
+    </div>
+
+    <!-- ── MAIN GRID ── -->
+    <div class="main-grid">
+
+        <!-- LEFT COLUMN -->
+        <div class="left-col">
+
+            <!-- Portrait -->
+            <div class="portrait-card">
+                <div class="avatar-wrap">
+                    <div class="ring ring-1"></div>
+                    <div class="ring ring-2"></div>
+                    <div class="avatar">KD</div>
+                </div>
+                <div class="class-block">
+                    <div class="class-label">Class</div>
+                    <div class="class-name">Operations Mage</div>
+                    <div class="guild-name">Storyteller Archetype</div>
+                </div>
+            </div>
+
+            <!-- Vitals -->
+            <div class="panel">
+                <div class="panel-title">Vital Stats</div>
+                <div class="vitals">
+                    <div class="vital-row">
+                        <div class="vital-label-row">
+                            <span class="vital-name vn-hp">Resilience</span>
+                            <span class="vital-val" style="color:var(--green)">86 / 100</span>
+                        </div>
+                        <div class="bar-track"><div class="bar-fill bar-hp" data-w="86"></div></div>
+                    </div>
+                    <div class="vital-row">
+                        <div class="vital-label-row">
+                            <span class="vital-name vn-mp">Creativity</span>
+                            <span class="vital-val" style="color:var(--blue)">94 / 100</span>
+                        </div>
+                        <div class="bar-track"><div class="bar-fill bar-mp" data-w="94"></div></div>
+                    </div>
+                    <div class="vital-row">
+                        <div class="vital-label-row">
+                            <span class="vital-name vn-xp">Experience</span>
+                            <span class="vital-val" style="color:var(--gold)">78 / 100</span>
+                        </div>
+                        <div class="bar-track"><div class="bar-fill bar-xp" data-w="78"></div></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Core Attributes -->
+            <div class="panel">
+                <div class="panel-title">Core Attributes</div>
+                <div class="stat-grid">
+                    <div class="stat-item">
+                        <div class="stat-abbr">CHA</div>
+                        <div class="stat-value">20</div>
+                        <div class="stat-name">Influence</div>
+                        <div class="stat-tip">Stakeholder management, cross-functional communication & storytelling. Max stat.</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-abbr">INT</div>
+                        <div class="stat-value">19</div>
+                        <div class="stat-name">Strategy</div>
+                        <div class="stat-tip">Strategic planning, editorial vision, and data-driven decision making.</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-abbr">WIS</div>
+                        <div class="stat-value">18</div>
+                        <div class="stat-name">Process</div>
+                        <div class="stat-tip">Operational optimization, scalable workflow design, and process innovation.</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-abbr">CON</div>
+                        <div class="stat-value">18</div>
+                        <div class="stat-name">Endurance</div>
+                        <div class="stat-tip">6+ years, 7 roles at Apple. Thrives under pressure and ambiguity.</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-abbr">STR</div>
+                        <div class="stat-value">17</div>
+                        <div class="stat-name">Execution</div>
+                        <div class="stat-tip">Delivery across multi-workstream projects with high autonomy and low supervision.</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-abbr">DEX</div>
+                        <div class="stat-value">16</div>
+                        <div class="stat-name">Adaptability</div>
+                        <div class="stat-tip">Broadcast → Tech Ops → Finance → Training. Nonlinear career, always landing on her feet.</div>
+                    </div>
+                </div>
+            </div>
+
+        </div><!-- /LEFT -->
+
+        <!-- RIGHT COLUMN -->
+        <div class="right-col">
+
+            <!-- Tabs -->
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="skills">Skills</button>
+                <button class="tab-btn" data-tab="quests">Quest Log</button>
+                <button class="tab-btn" data-tab="equipment">Equipment</button>
+                <button class="tab-btn" data-tab="lore">Lore</button>
+            </div>
+
+            <!-- ── SKILLS ── -->
+            <div id="tab-skills" class="tab-pane active">
+                <div class="skills-grid">
+                    <div class="skill-card">
+                        <div class="skill-top">
+                            <div class="skill-name">Strategic Planning</div>
+                            <div class="stars"><span class="s on">★</span><span class="s on">★</span><span class="s on">★</span><span class="s on">★</span><span class="s on">★</span></div>
+                        </div>
+                        <div class="skill-desc">Designs enterprise-level operational frameworks at Apple scale.</div>
+                    </div>
+                    <div class="skill-card">
+                        <div class="skill-top">
+                            <div class="skill-name">Stakeholder Management</div>
+                            <div class="stars"><span class="s on">★</span><span class="s on">★</span><span class="s on">★</span><span class="s on">★</span><span class="s on">★</span></div>
+                        </div>
+                        <div class="skill-desc">Fluent in Finance, IT, Ops, and Exec — bridges departments naturally.</div>
+                    </div>
+                    <div class="skill-card">
+                        <div class="skill-top">
+                            <div class="skill-name">Cross-Functional Collab</div>
+                            <div class="stars"><span class="s on">★</span><span class="s on">★</span><span class="s on">★</span><span class="s on">★</span><span class="s on">★</span></div>
+                        </div>
+                        <div class="skill-desc">Navigates complex multi-team environments without creating silos.</div>
+                    </div>
+                    <div class="skill-card">
+                        <div class="skill-top">
+                            <div class="skill-name">Storytelling & Narrative</div>
+                            <div class="stars"><span class="s on">★</span><span class="s on">★</span><span class="s on">★</span><span class="s on">★</span><span class="s on">★</span></div>
+                        </div>
+                        <div class="skill-desc">From PBS docu-series to Apple enterprise — translates complexity into clarity.</div>
+                    </div>
+                    <div class="skill-card">
+                        <div class="skill-top">
+                            <div class="skill-name">Project Management</div>
+                            <div class="stars"><span class="s on">★</span><span class="s on">★</span><span class="s on">★</span><span class="s on">★</span><span class="s">★</span></div>
+                        </div>
+                        <div class="skill-desc">Manages multi-workstream initiatives with high autonomy and delivery rate.</div>
+                    </div>
+                    <div class="skill-card">
+                        <div class="skill-top">
+                            <div class="skill-name">Training & Facilitation</div>
+                            <div class="stars"><span class="s on">★</span><span class="s on">★</span><span class="s on">★</span><span class="s on">★</span><span class="s">★</span></div>
+                        </div>
+                        <div class="skill-desc">Live and async training delivery; end-to-end onboarding lifecycle management.</div>
+                    </div>
+                    <div class="skill-card">
+                        <div class="skill-top">
+                            <div class="skill-name">Process Innovation</div>
+                            <div class="stars"><span class="s on">★</span><span class="s on">★</span><span class="s on">★</span><span class="s on">★</span><span class="s">★</span></div>
+                        </div>
+                        <div class="skill-desc">Proactively identifies gaps and designs scalable workflow improvements.</div>
+                    </div>
+                    <div class="skill-card">
+                        <div class="skill-top">
+                            <div class="skill-name">Ambiguity Navigation</div>
+                            <div class="stars"><span class="s on">★</span><span class="s on">★</span><span class="s on">★</span><span class="s on">★</span><span class="s">★</span></div>
+                        </div>
+                        <div class="skill-desc">Stabilizing force in fast-paced, undefined terrain — makes data-driven calls.</div>
+                    </div>
+                    <div class="skill-card">
+                        <div class="skill-top">
+                            <div class="skill-name">Data Analysis</div>
+                            <div class="stars"><span class="s on">★</span><span class="s on">★</span><span class="s on">★</span><span class="s">★</span><span class="s">★</span></div>
+                        </div>
+                        <div class="skill-desc">Episode analytics at PBS; operational KPI tracking at Apple.</div>
+                    </div>
+                </div>
+
+                <div class="section-head">Active Abilities</div>
+                <div class="abilities-grid">
+                    <div class="ability-card t-teal">
+                        <div class="ab-icon">🌉</div>
+                        <div class="ab-name">Bridge Builder</div>
+                        <div class="ab-desc">Connects Finance, IT, Ops, and Clinical teams instantly. Silos dissolve passively.</div>
+                    </div>
+                    <div class="ability-card t-purple">
+                        <div class="ab-icon">📖</div>
+                        <div class="ab-name">Narrative Weave</div>
+                        <div class="ab-desc">Transforms 60-min documentaries or multi-stakeholder projects into stories people care about.</div>
+                    </div>
+                    <div class="ability-card t-gold">
+                        <div class="ab-icon">⚓</div>
+                        <div class="ab-name">Training Anchor</div>
+                        <div class="ab-desc">Operational anchor for live & async sessions — manages agendas, troubleshoots in real-time.</div>
+                    </div>
+                    <div class="ability-card t-red">
+                        <div class="ab-icon">🔴</div>
+                        <div class="ab-name">Red Team Protocol</div>
+                        <div class="ab-desc">Stress-tests systems and processes. Surfaces critical gaps before they become incidents.</div>
+                    </div>
+                    <div class="ability-card t-blue">
+                        <div class="ab-icon">🗺️</div>
+                        <div class="ab-name">Unmapped Territory</div>
+                        <div class="ab-desc">Pilots undefined workflows with confidence. Always has a Plan B (and C).</div>
+                    </div>
+                    <div class="ability-card t-green">
+                        <div class="ab-icon">📊</div>
+                        <div class="ab-name">Color-Coded Clarity</div>
+                        <div class="ab-desc">Legendary tracker craftsmanship. All data an accurate Source of Truth. Always.</div>
+                    </div>
+                </div>
+            </div><!-- /skills -->
+
+            <!-- ── QUEST LOG ── -->
+            <div id="tab-quests" class="tab-pane">
+                <div class="quest-list">
+
+                    <!-- FEATURED: Lyra Health -->
+                    <div class="quest-card featured">
+                        <div>
+                            <div class="q-name">⚡ Training Operations Associate II</div>
+                            <div class="q-org">Lyra Health &nbsp;·&nbsp; Remote, USA</div>
+                            <ul class="q-list">
+                                <li>Lead training execution & technical facilitation for 1099 and W2 provider networks</li>
+                                <li>Primary provider liaison — high-standard customer service at scale</li>
+                                <li>Drive process innovation and cross-functional partnerships (Clinical, HR, IT)</li>
+                                <li>Manage Salesforce, WorkRamp, Zendesk, and Google Suite as Source of Truth</li>
+                            </ul>
+                            <div class="align-box">
+                                <div class="align-row"><span class="ck">✓</span> 3+ Years Ops Experience</div>
+                                <div class="align-row"><span class="ck">✓</span> Google Suite (Legendary)</div>
+                                <div class="align-row"><span class="ck">✓</span> Cross-Functional Collab (CHA 20)</div>
+                                <div class="align-row"><span class="ck">✓</span> Project Management</div>
+                                <div class="align-row"><span class="ck">✓</span> Training Facilitation</div>
+                                <div class="align-row"><span class="ck">✓</span> Provider / People Ops</div>
+                                <div class="align-row"><span class="ck partial">~</span> Salesforce / Zendesk (Rare)</div>
+                                <div class="align-row"><span class="ck partial">~</span> WorkRamp LMS (Rare)</div>
+                            </div>
+                        </div>
+                        <div class="q-side">
+                            <span class="badge available">AVAILABLE</span>
+                            <span class="q-dur">2026</span>
+                        </div>
+                    </div>
+
+                    <div class="quest-card">
+                        <div>
+                            <div class="q-name">Financial Services Strategic Coordinator</div>
+                            <div class="q-org">Apple &nbsp;·&nbsp; Hartford, CT</div>
+                            <ul class="q-list">
+                                <li>Strategic coordination across Apple Financial Services enterprise operations</li>
+                                <li>Hardware lifecycle strategy and multi-team initiative management</li>
+                            </ul>
+                        </div>
+                        <div class="q-side">
+                            <span class="badge active">ACTIVE</span>
+                            <span class="q-dur">Feb 2026–Present</span>
+                        </div>
+                    </div>
+
+                    <div class="quest-card">
+                        <div>
+                            <div class="q-name">People Operations Planner</div>
+                            <div class="q-org">Apple &nbsp;·&nbsp; Lynnwood, WA</div>
+                            <ul class="q-list">
+                                <li>Planned and managed people operations at scale for large, distributed teams</li>
+                                <li>Cross-functional coordination across HR, IT, and Operations</li>
+                            </ul>
+                        </div>
+                        <div class="q-side">
+                            <span class="badge done">COMPLETE</span>
+                            <span class="q-dur">3 years</span>
+                        </div>
+                    </div>
+
+                    <div class="quest-card">
+                        <div>
+                            <div class="q-name">Engineering Project Manager (Red Teaming)</div>
+                            <div class="q-org">Apple &nbsp;·&nbsp; Seattle, WA</div>
+                            <ul class="q-list">
+                                <li>Led red-team operations stress-testing engineering workflows pre-deployment</li>
+                                <li>Identified critical process vulnerabilities; designed mitigation playbooks</li>
+                            </ul>
+                        </div>
+                        <div class="q-side">
+                            <span class="badge done">COMPLETE</span>
+                            <span class="q-dur">6 months</span>
+                        </div>
+                    </div>
+
+                    <div class="quest-card">
+                        <div>
+                            <div class="q-name">Catalyst Producer & Program Coordinator</div>
+                            <div class="q-org">Arizona PBS &nbsp;·&nbsp; Phoenix, AZ</div>
+                            <ul class="q-list">
+                                <li>Produced nightly shows and documentary segments — concept to air</li>
+                                <li>Coordinated high-profile show guests and political debates</li>
+                                <li>Managed episode analytics and data collection</li>
+                            </ul>
+                        </div>
+                        <div class="q-side">
+                            <span class="badge done">COMPLETE</span>
+                            <span class="q-dur">2 yrs 1 mo</span>
+                        </div>
+                    </div>
+
+                    <div class="quest-card">
+                        <div>
+                            <div class="q-name">Editorial Planning Assistant</div>
+                            <div class="q-org">Apple HQ &nbsp;·&nbsp; Cupertino, CA</div>
+                            <ul class="q-list">
+                                <li>Editorial planning at Apple headquarters — content meets enterprise strategy</li>
+                            </ul>
+                        </div>
+                        <div class="q-side">
+                            <span class="badge done">COMPLETE</span>
+                            <span class="q-dur">10 months</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div><!-- /quests -->
+
+            <!-- ── EQUIPMENT ── -->
+            <div id="tab-equipment" class="tab-pane">
+                <div class="equip-grid">
+                    <div class="equip-card legendary">
+                        <div class="eq-icon">📊</div>
+                        <div class="eq-name">Google Suite</div>
+                        <div class="eq-rarity r-legendary">Legendary</div>
+                        <div class="eq-desc">Full proficiency. Docs, Sheets, Slides, Drive, Meet — home base.</div>
+                    </div>
+                    <div class="equip-card legendary">
+                        <div class="eq-icon">🗂️</div>
+                        <div class="eq-name">Color-Coded Tracker</div>
+                        <div class="eq-rarity r-legendary">Legendary</div>
+                        <div class="eq-desc">Self-crafted. No project survives without one.</div>
+                    </div>
+                    <div class="equip-card epic">
+                        <div class="eq-icon">☁️</div>
+                        <div class="eq-name">Salesforce</div>
+                        <div class="eq-rarity r-epic">Epic</div>
+                        <div class="eq-desc">CRM management and data accuracy — Source of Truth maintenance.</div>
+                    </div>
+                    <div class="equip-card epic">
+                        <div class="eq-icon">🎬</div>
+                        <div class="eq-name">Broadcast Suite</div>
+                        <div class="eq-rarity r-epic">Epic</div>
+                        <div class="eq-desc">Sony professional audio, cameras, and production workflows. Yes, really.</div>
+                    </div>
+                    <div class="equip-card rare">
+                        <div class="eq-icon">🎧</div>
+                        <div class="eq-name">Zendesk</div>
+                        <div class="eq-rarity r-rare">Rare</div>
+                        <div class="eq-desc">Support ticket management and provider relations tooling.</div>
+                    </div>
+                    <div class="equip-card rare">
+                        <div class="eq-icon">📚</div>
+                        <div class="eq-name">WorkRamp (LMS)</div>
+                        <div class="eq-rarity r-rare">Rare</div>
+                        <div class="eq-desc">Training content design, rollout, and lifecycle management.</div>
+                    </div>
+                    <div class="equip-card uncommon">
+                        <div class="eq-icon">🤖</div>
+                        <div class="eq-name">Gemini AI</div>
+                        <div class="eq-rarity r-uncommon">Uncommon</div>
+                        <div class="eq-desc">AI-augmented workflows for operational efficiency.</div>
+                    </div>
+                    <div class="equip-card uncommon">
+                        <div class="eq-icon">🎙️</div>
+                        <div class="eq-name">Live Facilitation</div>
+                        <div class="eq-rarity r-uncommon">Uncommon</div>
+                        <div class="eq-desc">Trained on-camera, on-stage, and in-room. Presence is +2 to CHA.</div>
+                    </div>
+                </div>
+            </div><!-- /equipment -->
+
+            <!-- ── LORE ── -->
+            <div id="tab-lore" class="tab-pane">
+                <div class="lore-block">
+                    <p>
+                        <span class="hi-gold">Khim David</span> began her journey not behind a desk,
+                        but behind a camera — producing stories for Arizona PBS that turned raw footage
+                        into something audiences actually cared about. Early quests taught her the most
+                        important skill of all: <span class="hi">translate complexity into clarity</span>.
+                    </p>
+                    <p>
+                        When Apple came calling, she discovered that the same craft applied to enterprise.
+                        Multi-stakeholder lifecycle transformations are just 60-minute documentaries
+                        with more Slack channels. Over <span class="hi">six years and seven roles</span>,
+                        she mastered people operations, editorial planning, red-team engineering,
+                        and financial services strategy. Few adventurers cross that many disciplines
+                        without losing the thread. She never did.
+                    </p>
+                    <p>
+                        Her greatest power is a rare one: she <span class="hi">speaks Finance, IT, Ops,
+                        and Exec</span> fluently — not as a translator, but as a native. She builds
+                        bridges between silos not because she was trained to, but because she genuinely
+                        sees no walls. A <span class="hi-gold">first-gen Filipino-American</span> lens
+                        that values both rigor and humanity.
+                    </p>
+                    <p>
+                        Now she seeks a new quest — one where operational excellence meets human impact.
+                        A place where the work of enablement: training people, clearing friction,
+                        scaling support, directly <span class="hi">changes lives</span>.
+                        That quest is called <span class="hi-gold">Lyra Health</span>.
+                    </p>
+                </div>
+            </div><!-- /lore -->
+
+        </div><!-- /RIGHT -->
+    </div><!-- /main-grid -->
+
+    <!-- ── FOOTER ── -->
+    <div class="footer">
+        <a href="mailto:kimdvd95@gmail.com" class="contact-link">📬 kimdvd95@gmail.com</a>
+        <a href="https://www.linkedin.com/in/kdavidtv" class="contact-link" target="_blank">💼 linkedin.com/in/kdavidtv</a>
+        <a href="https://kimdvd95.wixsite.com/khimdavid" class="contact-link" target="_blank">🌐 Portfolio</a>
+        <span class="contact-link">📱 480.320.0533</span>
+    </div>
+
+</div><!-- /sheet -->
+
+<script>
+    // Animate vital bars on load
+    window.addEventListener('load', () => {
+        setTimeout(() => {
+            document.querySelectorAll('.bar-fill').forEach(el => {
+                el.style.width = el.dataset.w + '%';
+            });
+        }, 400);
+    });
+
+    // Tab switching
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const target = btn.dataset.tab;
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById('tab-' + target).classList.add('active');
+        });
+    });
+</script>
+</body>
+</html>
